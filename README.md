@@ -1,6 +1,6 @@
-# Trade It Skill
+# Trade It React Skill
 
-This repository contains the `trade-it` skill for use with skills.sh and compatible AI agent runtimes.
+This repository contains the `trade-it-react` skill for use with skills.sh and compatible AI agent runtimes.
 
 ## Contents
 
@@ -11,8 +11,8 @@ This repository contains the `trade-it` skill for use with skills.sh and compati
 
 ## Skill
 
-- Name: `trade-it`
-- Invocation: `$trade-it`
+- Name: `trade-it-react`
+- Invocation: `$trade-it-react`
 
 ## Purpose
 

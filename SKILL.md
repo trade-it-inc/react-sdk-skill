@@ -1,9 +1,9 @@
 ---
-name: trade-it
+name: trade-it-react
 description: Implement Trade It embedded SDK integrations in a web app. Use when asked to add Trade It connect or trade modals, wire a server route that calls Trade It POST /api/session/url, or integrate @trade-it/react into an existing React codebase.
 ---
 
-# Trade It SDK Integration
+# Trade It React SDK Integration
 
 ## Overview
 
