@@ -14,6 +14,12 @@ This repository contains the `trade-it-react` skill for use with skills.sh and c
 - Name: `trade-it-react`
 - Invocation: `$trade-it-react`
 
+Install it with:
+
+```bash
+npx skills add trade-it-inc/react-sdk-skill
+```
+
 ## Purpose
 
 Use this skill to help an AI one-shot implement the Trade It embedded SDK in a partner application, including:

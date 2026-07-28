@@ -14,6 +14,14 @@
 - The partner already has (or is implementing) OAuth with Trade It.
 - The partner can read a per-user Trade It access token from server-side code.
 
+## OAuth Discovery
+
+- Metadata: `https://tradeit.app/.well-known/oauth-authorization-server`
+- Authorization code and refresh token grants are supported.
+- Use PKCE `S256` and keep the partner `client_secret` server-side.
+- Store access and refresh tokens per user. Refresh access tokens server-side.
+- Connect sessions require brokerage write access. Trade sessions require asset read, brokerage read, and trade write access.
+
 ## Session URL Endpoint
 
 Trade It session URLs must be requested server-side.
@@ -35,15 +43,17 @@ Optional direct brokerage launch:
 ```json
 {
   "target": "connect",
-  "brokerageId": 1
+  "brokerageId": 7
 }
 ```
+
+`7` launches Charles Schwab. `1` launches Robinhood. Omit `brokerageId` to show the current brokerage picker; use the canonical brokerages documentation for the complete generated ID list.
 
 ### Connect response
 
 ```json
 {
-  "url": "https://tradeit.app/connect?token=ti:...&embedded=1",
+  "url": "https://tradeit.app/connect/7?ti_token=ti:...&embedded=1",
   "expiresAt": "2026-02-27T19:35:12.000Z",
   "feature": "connect"
 }
@@ -65,7 +75,7 @@ Authorization: Bearer <user's trade it access token>
 
 ```json
 {
-  "url": "https://tradeit.app/t/[ticker]?token=ti:...&embedded=1",
+  "url": "https://tradeit.app/t/[ticker]?ti_token=ti:...&embedded=1",
   "expiresAt": "2026-02-27T19:35:12.000Z",
   "feature": "trade",
   "placeholder": "[ticker]"
@@ -73,6 +83,8 @@ Authorization: Bearer <user's trade it access token>
 ```
 
 Use the returned `url` directly in the SDK. For trade flows, the URL contains the literal `[ticker]` placeholder and the SDK replaces it from `launch.config.ticker`.
+
+Request session URLs immediately before opening the modal. They expire after 30 minutes and must not be cached for later reuse.
 
 ## React SDK Usage
 
@@ -108,6 +120,8 @@ tradeIt.openTrade({
       unit: TradeUnit.Dollars,
       orderType: OrderType.Market,
       timeInForce: TimeInForce.Day,
+      takeProfit: { value: 10, unit: TriggerUnit.Percent },
+      stopLoss: { value: 5, unit: TriggerUnit.Percent },
     },
   },
 });
@@ -123,7 +137,8 @@ tradeIt.openTrade({
     config: {
       tradeType: TradeType.MultiLeg,
       ticker: 'MSFT',
-      orderType: OrderType.Market,
+      direction: OrderDirection.Debit,
+      orderType: OrderType.Limit,
       timeInForce: TimeInForce.GoodTillCanceled,
       limitPrice: 1.25,
       legs: [

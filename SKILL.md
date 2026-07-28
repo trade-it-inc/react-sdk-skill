@@ -9,7 +9,7 @@ description: Implement Trade It embedded SDK integrations in a web app. Use when
 
 Use this skill to embed Trade It into a partner application to create an OOTB stock, crypto, or options trading experience.
 
-Assume the user is (or is becoming) a Trade It partner and stores per-user Trade It access tokens server-side. If OAuth token storage is not implemented yet, scaffold the integration points and leave clear TODOs instead of inventing fake auth.
+Assume the user is (or is becoming) a Trade It partner and stores per-user Trade It access and refresh tokens server-side. If OAuth is not implemented, use Trade It's published authorization-server metadata and scaffold the callback, exchange, refresh, and storage boundaries without inventing credentials.
 
 ## Workflow
 
@@ -28,6 +28,7 @@ Assume the user is (or is becoming) a Trade It partner and stores per-user Trade
   - `{ "target": "trade" }`
 - Return the Trade It JSON response unchanged when possible.
 - Add a `TRADE_IT_API_URL` env var if the app does not already have one. Default to `https://api.tradeit.app` if unavailable.
+- Request a new session URL immediately before opening a modal. Do not cache or reuse it after its 30-minute expiry.
 
 3. Add the client-side SDK integration.
 - Install `@trade-it/react`.
@@ -42,6 +43,8 @@ Assume the user is (or is becoming) a Trade It partner and stores per-user Trade
 4. Map trade configuration correctly.
 - Use SDK enums instead of hard-coded strings.
 - Use full config property names (`tradeType`, `orderType`, `timeInForce`, `positionEffect`, etc.).
+- Include `direction` for priced multi-leg orders. Use `OrderDirection.Even` only with a zero-price limit order.
+- Use `takeProfit` and `stopLoss` only for simple Buy entries and represent their units with `TriggerUnit`.
 - For options or multi-leg trades, use `tradeType: TradeType.MultiLeg` and provide `legs`.
 
 5. Validate the finished integration.
@@ -57,6 +60,7 @@ Assume the user is (or is becoming) a Trade It partner and stores per-user Trade
 - Keep route names and patterns idiomatic to the partner's stack.
 - Reuse the partner's existing modal/state/fetch patterns where possible.
 - If there is no trusted server-side source for the current user's Trade It token, stop and document that as the blocker.
+- For a direct brokerage connection (e.g.Charles Schwab), use `brokerageId: 7`; omit `brokerageId` when the brokerage picker is preferred.
 
 ## Required Deliverables
 
@@ -66,6 +70,7 @@ When using this skill, produce:
 - client-side modal wiring for connect and/or trade
 - any required env var additions
 - a short note showing where the user's Trade It token must come from
+- OAuth callback/token-storage scaffolding when the partner app does not already have it
 
 ## References
 

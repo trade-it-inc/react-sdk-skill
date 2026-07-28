@@ -15,6 +15,9 @@ Use this reference when building `launch.config` for `tradeIt.openTrade(...)` or
 | `limitPrice` | Limit price | `number` | `simple` `options` | — | Used for `limit` / `stop_limit` |
 | `stopPrice` | Stop trigger price | `number` | `simple` `options` | — | Used for `stop` / `stop_limit` |
 | `timeInForce` | Order duration | `TimeInForce` | `simple` `options` | `TimeInForce.Day` | `day`, `gtc`, `ioc`, `fok` |
+| `direction` | Net options price direction | `OrderDirection` | `options` | — | `Debit`, `Credit`, or `Even`; use `Even` only for zero-price limit orders |
+| `takeProfit` | Attached take-profit exit | `TradeItExitTrigger` | `simple` Buy | — | Use `TriggerUnit.Price` or `TriggerUnit.Percent`; support varies by brokerage |
+| `stopLoss` | Attached stop-loss exit | `TradeItExitTrigger` | `simple` Buy | — | Use `TriggerUnit.Price` or `TriggerUnit.Percent`; support varies by brokerage |
 | `legs` | Options leg payload | `TradeItMultiLegTradeLegConfig[]` | `options` | — | Required for options/multi-leg trades |
 | `legs[].type` | Leg type | `LegType` | `options` | — | `option` or `equity` |
 | `legs[].action` | Leg action | `TradeAction` | `options` | — | `buy` or `sell` |
@@ -56,6 +59,15 @@ Use this reference when building `launch.config` for `tradeIt.openTrade(...)` or
 - `PositionEffect.Open`
 - `PositionEffect.Close`
 
+### `OrderDirection`
+- `OrderDirection.Debit`
+- `OrderDirection.Credit`
+- `OrderDirection.Even`
+
+### `TriggerUnit`
+- `TriggerUnit.Price`
+- `TriggerUnit.Percent`
+
 ## Examples
 
 ### Simple buy
@@ -69,6 +81,8 @@ Use this reference when building `launch.config` for `tradeIt.openTrade(...)` or
   unit: TradeUnit.Dollars,
   orderType: OrderType.Market,
   timeInForce: TimeInForce.Day,
+  takeProfit: { value: 10, unit: TriggerUnit.Percent },
+  stopLoss: { value: 5, unit: TriggerUnit.Percent },
 }
 ```
 
@@ -94,7 +108,8 @@ Use this reference when building `launch.config` for `tradeIt.openTrade(...)` or
 {
   tradeType: TradeType.MultiLeg,
   ticker: 'MSFT',
-  orderType: OrderType.Market,
+  direction: OrderDirection.Debit,
+  orderType: OrderType.Limit,
   timeInForce: TimeInForce.GoodTillCanceled,
   limitPrice: 1.25,
   legs: [
